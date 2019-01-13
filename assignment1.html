@@ -1,25 +1,90 @@
-<!DOCTYPE html> 
-<html> 
-    <head> 
-        <meta charset="utf-8"> 
-        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 
-        <title>Example Student's HCDE 439 Physical Computing Page!</title> 
+    <title>Example Student's HCDE 439 Physical Computing Page!</title>
 
-        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Tre's Assignment 1! Flashing Lights</h1>
+      <img src="./images/led_blink.gif" width="400" />
 
-    </head> 
-    <body> 
+      <p>
+        As an introduction to using an Arduino, I used a breadboard and LEDs to
+        make 3 lights blink.
+      </p>
 
-        <div class="header">
-            <h1>Example Student's Assignment 1!</h1>
-            <p>
-            <img src="red-panda.jpg" width=400></a>
-            </p>
-            <p>
-            Here is all the documentation for assignment 1!
-            </p>
-        </div>
-        
-    </body>
+      <h2>Schematics and Circuitry</h2>
+
+      <img src="./images/Schematic_1.JPG" width="400" />
+
+      <p>
+        I originally wanted to run all three LEDs through one series, but
+        because the arduino only outputs 5 volts, it made all the LEDs end up
+        very dim because they were slated to pull 5.4 volts all together. So, I
+        decided to run 2 Red LEDs in series and then a separate Yellow LED in
+        parallel with the 2 Red LEDS.
+      </p>
+      <img src="./images/math_1.JPG" width="400" />
+      <p>
+        Using Ohm's Law, I calculated the amount of resistance I would need for
+        each circuit I would run in parallel. Both circuits needed less that 220
+        Ohms or resistance, which was the lowest type of resistor I had, so I used 2 220 Ohm resistors.
+      </p>
+
+      <img src = "./images/circuit_1.png">
+      <p>After connecting everything together properly, this is what my circuit looked like  </p>
+
+      <h2> Code and Final Operation</h2>
+
+      <p>
+      After this, I needed to make the LEDs blink using Arduino code. Luckily, LED blinking is given in the arduino IDE as an example, so i easily made the LEDs work after tinkering with the code a littler bit.
+      
+      I ended up with some small difference from the example:
+
+      <pre>
+        /*
+        My Blink
+      
+        Turns an LED on for one second, then off for one second, repeatedly.
+      
+        This is mostly taken from the Arduino sample, but I changed the output pin and time between blinks
+       */
+      
+      // the setup function runs once when you press reset or power the board
+      void setup() {
+        pinMode(12, OUTPUT); // initialize digital pin 13 as an output.
+      }
+      
+      // the loop function runs over and over again forever
+      void loop() {
+        digitalWrite(12, HIGH);   // turn the LED on (HIGH is the voltage level)
+        delay(500);                       // wait half a second
+        digitalWrite(12, LOW);    // turn the LED off by making the voltage LOW
+        delay(500);                       // wait half a second
+      }
+
+      </pre>
+
+</p>
+      <p>
+
+      Running this code through the arduino resulted in this beautiful, seasonal flashing light.
+
+      </p>
+<img src="./images/led_blink.gif" width="400" />
+      
+
+
+
+
+
+
+      <footer>Thanks for reading, I hope you learned something!</footer>
+    </div>
+  </body>
 </html>
