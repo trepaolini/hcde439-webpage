@@ -35,9 +35,13 @@
       <p>
         This schematic uses colors to show what is connected between the motor, joystick, power, pins, and ground. No extra resistors were required to control the overall current from being too high in this circuit.
       </p>
+
       
 
       <h2> Code and Final Operation</h2>
+
+
+      <p> Using the serial monitor, I found that the y position value sat around 550 when unmoved, above 600 when moved up, and below 400 when moved down. I also noticed that the servomotor only has a degree of motion between 0 and 180, it cannot make full rotations over and over. To account for these values, I have various checks in my program to make sure y-values are being met and that servo position values are not being increased after 180 or decreased after 10, so that the motor does not try to rotate passed what it is capable of.</p>
 
       <p>
       Here my final code:
