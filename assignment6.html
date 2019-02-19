@@ -4,107 +4,142 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 
-    <title>Tre's Assignment 5: Motors</title>
+    <title>Tre's Assignment 6: Data logging</title>
 
     <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
   </head>
   <body>
     <div class="header">
-      <h1>Tre's Assignment 5! Motors</h1>
-      <img src="./images/ass_5/servo-test.gif" width="400" />
+      <h1>Tre's Assignment 6! Data logging</h1>
+      <img src="./images/ass_6/graph.gif" width="400" />
 
       <p>
-        This week, I used my arduino to control a servomotor using a joystick!
+        This week, I used my arduino to make a graph on a website according to output from a potentiometer
       </p>
 
-      <h2>Circuitry and Schematics</h2>
+      <h2>Circuitry and Schematic</h2>
 
       
-      <img src="./images/ass_5/circuit-bread.JPG" width="400" />
-      <img src="./images/ass_5/circuit-ardu.JPG" width="400" />
-      <img src="./images/ass_5/circuit-joystick.JPG" width="400" />
+      <img src="./images/ass_6/circuit.JPG" width="400" />
+      <img src="./images/ass_6/circuit2.JPG" width="400" />
 
 
-      <p>Here is what my breadboard, arduino, and Joystick wiring looked like by the end of the project. It is hard to tell with so many wires, but the 5v power is connected to both the joystick and the motor, the joysticks horizontal direction pin is connected to the arduino's A0 pin, and the servomotors control pin is connected to the arduino's 8 pin</p>
+
+      <p>Here is what my breadboard and arduino looked like by the end of the project. The arduino is reading analog input from the potentiometer from the A0 pin and there are also wires for 5v power and ground to the potentiometer. This can be seen clearly through the schematic below</p>
 
 
-      <img src="./images/ass_5/schematic.JPG" width="400" class="rotate" />
-
-      
-
-      <p>
-        This schematic uses colors to show what is connected between the motor, joystick, power, pins, and ground. No extra resistors were required to control the overall current from being too high in this circuit.
-      </p>
+      <img src="./images/ass_6/schematic.JPG" width="400" class="rotate" />
 
       
 
       <h2> Code and Final Operation</h2>
 
 
-      <p> Using the serial monitor, I found that the y position value sat around 550 when unmoved, above 600 when moved up, and below 400 when moved down. I also noticed that the servomotor only has a degree of motion between 0 and 180, it cannot make full rotations over and over. To account for these values, I have various checks in my program to make sure y-values are being met and that servo position values are not being increased after 180 or decreased after 10, so that the motor does not try to rotate passed what it is capable of.</p>
-
-      <p>
-      Here my final code:
+      <p>  Here is the arduino code that reads the analog input</p>
 
       <pre>
-        // This program uses a joystick to control a servo motor
 
-        // This program was informed by information from this article: https://maker.pro/arduino/tutorial/how-to-control-servo-motors-with-an-arduino-and-joystick
-        
-        // Initial variables are set
-        #include <Servo.h>
-        Servo servo;               // Servo object is made
-        const int y_pin = A0;      // y-pos value will be made at the A0 pin
-        int y_pos;                 // Will hold the current y position value
-        const int servo_pin = 8;   // the servo motor will be controlled by pin 8
-        int current_position = 90; // The current position of the servomotor
-        
-        // Sets up everything
-        void setup()
-        {
-          servo.attach(servo_pin);       // connects the servemotor to pin 8
-          servo.write(current_position); // gives the servomotor an initial position
-          pinMode(y_pin, INPUT);         // defines A0 as an input pin
-          Serial.begin(9600);            // starts a serial monitor for value checking
+        // Reads data from a potentiometer and outputs it to the console
+
+        void setup() {
+          Serial.begin(9600); // sets up serial print
+          pinMode(A0, INPUT); // sets up pin
         }
-        
-        void loop()
-        {
-          y_pos = analogRead(y_pin); // reads the y position of the joystick
-          if (y_pos < 400)           // if the joystick is pushed down
-          {
-            if (current_position > 10) // if the current position is not at the end of the servomotor's movable range
-            {
-              current_position = current_position - 20; // move the current position down
-              servo.write(current_position);            // write this value to the servomotor
-              delay(75);                                // add delay
-            }
-          }
-          if (y_pos > 600) // if the joystick is pushed up
-          {
-            if (current_position < 180) // if the current position is not at the top of the servomotor's movable range
-            {
-              current_position = current_position + 20; // move the current position up
-              servo.write(current_position);            // write this value to the servomotor
-              delay(75);                                // add delay
-            }
-          }
-        
-          // Write the current values to the serial monitor for double checking
-          Serial.print("y position: ");
-          Serial.println(y_pos);
-          Serial.print("current position: ");
-          Serial.println(current_position);
+
+        void loop() {
+          int pot = analogRead(A0); // reads analog input
+          Serial.println(pot); // prints input to serial
+          delay(200); // delays readings
         }
+
+      </pre>
+
+      <p>
+      Here is the javascript code to make it actually read the serial output and print it as a graph on a website.
+
+      <pre>
+        var serial; // variable to hold an instance of the serialport library
+var portName = "/dev/cu.usbmodem14101"; //rename to the name of your port
+var datain; //some data coming in over serial!
+var xPos = 0;
+
+function setup() {
+  serial = new p5.SerialPort(); // make a new instance of the serialport library
+  serial.on("list", printList); // set a callback function for the serialport list event
+  serial.on("connected", serverConnected); // callback for connecting to the server
+  serial.on("open", portOpen); // callback for the port opening
+  serial.on("data", serialEvent); // callback for when new data arrives
+  serial.on("error", serialError); // callback for errors
+  serial.on("close", portClose); // callback for the port closing
+
+  serial.list(); // list the serial ports
+  serial.open(portName); // open a serial port
+  createCanvas(1200, 800);
+  background(0x08, 0x16, 0x40);
+}
+
+// get the list of ports:
+function printList(portList) {
+  // portList is an array of serial port names
+  for (var i = 0; i < portList.length; i++) {
+    // Display the list the console:
+    print(i + " " + portList[i]);
+  }
+}
+
+function serverConnected() {
+  print("connected to server.");
+}
+
+function portOpen() {
+  print("the serial port opened.");
+}
+
+function serialError(err) {
+  print("Something went wrong with the serial port. " + err);
+}
+
+function portClose() {
+  print("The serial port closed.");
+}
+
+function serialEvent() {
+  if (serial.available()) {
+    datain = Number(serial.readLine());
+    console.log(datain);
+  }
+}
+
+function graphData(newData) {
+  // map the range of the input to the window height:
+  var yPos = map(newData, 0, 255, 0, height);
+  // draw the line in a pretty color:
+  stroke(255, 0, 80);
+  line(xPos, height, xPos, height - yPos);
+  // at the edge of the screen, go back to the beginning:
+  if (xPos >= width) {
+    xPos = 0;
+    // clear the screen by resetting the background:
+    background(0x08, 0x16, 0x40);
+  } else {
+    // increment the horizontal position for the next reading:
+    xPos++;
+  }
+}
+
+function draw() {
+  graphData(datain);
+}
+
       </pre>
 
 </p>
       <p>
 
-      Here is the final result, the motor moves based on if the joystick is moved up or down. I put a little android on the motor to make the movements more obvious.
+      Here is the final result:
 
       </p>
-      <img src="./images/ass_5/servo-test.gif" width="400" />
+      <img src="./images/ass_6/graph.gif" width="400" />
       
     </div>
   </body>
